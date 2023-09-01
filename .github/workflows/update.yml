@@ -1,0 +1,25 @@
+name: Update
+
+on:
+  schedule:
+    - cron:  '0 15 * * 0'
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - run: pipx install gdown
+    - uses: mfinelli/setup-imagemagick@v6
+    - run: |
+        git clone https://github.com/Cykooz/fast_image_resize --depth 1 --single-branch -b v5.1.0
+        cargo install --path ./fast_image_resize/resizer
+        rm -rf ./fast_image_resize
+
+    - run: gdown --version
+    - run: magick --version | sed -n 1p
+    - run: resizer --version
+
+    - run: ./ci.sh
