@@ -46,6 +46,12 @@ echo "[TSV]"
       .filter{_1=~/\p{Hiragana}/}
   ' > _answer.tsv
 
+{
+  grep -v 【 _answer.tsv
+  grep 【 _answer.tsv
+} > _
+mv _ _answer.tsv
+
 find '漢字でGO!/www/img/pictures' -name 'Lv*' |
   grep -E 'Lv[0-9]+_[0-9]+.rpgmvp' |
   grep -v 0000 |
@@ -57,9 +63,12 @@ find '漢字でGO!/www/img/pictures' -name 'LvCa004_*' |
 len_a="$(wc -l <_answer.tsv)"
 len_b="$(wc -l <_problem_a.tsv)"
 len_c="$(wc -l <_problem_b.tsv)"
+echo "_answer.tsv lines: <${len_a}>"
+echo "_problem_a.tsv:    <${len_b}>"
+echo "_problem_b.tsv:    <${len_c}>"
 if ! [[ "$len_a" == "$((len_b+len_c))" ]]
 then
-  echo "Error: _answer.tsv lines != _problem_a.tsv + _problem_b.tsv  mismatch.">&2
+  echo "Error: _answer.tsv lines <${len_a}> != _problem_a.tsv <${len_b}>  + _problem_b.tsv <${${len_c}}> mismatch.">&2
   exit 1
 fi
 
@@ -214,6 +223,7 @@ cat << EOS > index.html
   <li><a href='kanji_de_go_list_Lv04.html'>Lv04 -- 2〜1</a></li>
   <li><a href='kanji_de_go_list_Lv05.html'>Lv05 -- 準1〜対象外</a></li>
   <li><a href='kanji_de_go_list_Lv06.html'>Lv06 -- 対象外</a></li>
+  <li><a href='kanji_de_go_list_Lv07.html'>Lv07 -- 対象外</a></li>
   <li><a href='kanji_de_go_list_LvCa004.html'>LvCa004 -- JLPT N5</a></li>
 </ol>
 
