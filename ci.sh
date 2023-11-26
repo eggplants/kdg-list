@@ -2,8 +2,7 @@
 
 set -euxo pipefail
 
-python -c 'from cloudscraper import*;\
-           print(create_scraper().get("https://plicy.net/GamePlay/155561").text)' > game_page
+curl -s `https://raw.githubusercontent.com/Formidi/KanzideGoFAQ/gh-pages/md/faq.md` > game_page
 page_version="$(
   grep -oEm1 'Win\([^)]+' game_page | sed 's/....//'
 )"
