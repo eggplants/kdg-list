@@ -10,11 +10,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
-
-    - run: pipx install gdown
-
-    - uses: mfinelli/setup-imagemagick@v6
-
     - uses: actions/cache@v4
       with:
         path: |
@@ -29,9 +24,10 @@ jobs:
           cargo install --path ./fast_image_resize/resizer
           rm -rf ./fast_image_resize
         fi
-
-    - run: gdown --version
-    - run: magick --version | sed -n 1p
     - run: resizer --version
+    - run: pipx install gdown
+    - run: gdown --version
+    - uses: mfinelli/setup-imagemagick@v6
+    - run: magick --version | sed -n 1p
 
     - run: ./ci.sh
