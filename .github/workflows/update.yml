@@ -17,10 +17,10 @@ jobs:
           ~/.cargo/registry/index/
           ~/.cargo/registry/cache/
           ~/.cargo/git/db/
-        key: ${{ runner.os }}-cargo-resizer-5_1_0
+        key: ${{ runner.os }}-cargo-resizer-5_1_1
     - run: |
         if ! command -v resizer; then
-          git clone https://github.com/Cykooz/fast_image_resize --depth 1 --single-branch -b v5.1.0
+          git clone https://github.com/Cykooz/fast_image_resize --depth 1 --single-branch -b v5.1.1
           cargo install --path ./fast_image_resize/resizer
           rm -rf ./fast_image_resize
         fi
