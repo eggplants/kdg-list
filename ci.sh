@@ -46,7 +46,7 @@ fi
 git config user.name  "github-actions[bot]"
 git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-git add kanji_de_go.tsv
+git add kdg.tsv
 git commit -m "update ${game_version} / $(date +%Y-%m-%d)"
 git tag "$game_version"
 git push
