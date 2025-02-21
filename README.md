@@ -1,9 +1,9 @@
-# kanji-de-go-list
+# kdg-list
 
 [![Update](
-  <https://github.com/eggplants/kanji-de-go-list/actions/workflows/update.yml/badge.svg>
+  <https://github.com/eggplants/kdg-list/actions/workflows/update.yml/badge.svg>
   )](
-  <https://github.com/eggplants/kanji-de-go-list/actions/workflows/update.yml>
+  <https://github.com/eggplants/kdg-list/actions/workflows/update.yml>
 )
 
 ## Requirements
