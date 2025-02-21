@@ -57,7 +57,7 @@ then
   exit 1
 fi
 
-sed $'1iproblem\tanswer\tdescription' _answer.tsv > kanji_de_go.tsv
+sed $'1iproblem\tanswer\tdescription' _answer.tsv > kdg.tsv
 
 mkdir -p ./kanji_problems/png
 mkdir -p ./kanji_problems/webp
@@ -105,18 +105,18 @@ levels_len="${#levels[@]}"
 for (( idx=0; idx<levels_len; idx++ ))
 do
   level="${levels[idx]}"
-  f="kanji_de_go_list_${level}.html"
+  f="kdg_list_${level}.html"
   count="$(find kanji_problems/png -name "$level"'_*.png' | wc -l)"
 
   if [[ "$idx" != 0 ]]
   then
-    prv="<span><a href='kanji_de_go_list_${levels[idx-1]}.html'>${levels[idx-1]}</a></span>"
+    prv="<span><a href='kdg_list_${levels[idx-1]}.html'>${levels[idx-1]}</a></span>"
   else
     prv=""
   fi
   if [[ "$((idx+1))" != "$levels_len" ]]
   then
-    nxt="<span><a href='kanji_de_go_list_${levels[idx+1]}.html'>${levels[idx+1]}</a></span>"
+    nxt="<span><a href='kdg_list_${levels[idx+1]}.html'>${levels[idx+1]}</a></span>"
   else
     nxt=""
   fi
@@ -145,7 +145,7 @@ do
   <tbody>
 EOS
 
-  grep "$level" kanji_de_go.tsv | while IFS=$'\t' read -r a b c
+  grep "$level" kdg.tsv | while IFS=$'\t' read -r a b c
   do
     cat<<EOS
     <tr>
@@ -172,7 +172,7 @@ cat << EOS > index.html
 <html lang="ja" dir="ltr">
 <head>
 <meta charset="UTF-8">
-<title>kanji_de_go_list</title>
+<title>kdg_list</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 </head>
@@ -188,15 +188,15 @@ cat << EOS > index.html
 <h2>リスト一覧</h2>
 
 <ol>
-  <li><a href='kanji_de_go_list_Lv00.html'>Lv00 -- サンプル</a></li>
-  <li><a href='kanji_de_go_list_Lv01.html'>Lv01 -- 漢検10〜5級</a></li>
-  <li><a href='kanji_de_go_list_Lv02.html'>Lv02 -- 漢検6〜準2級</a></li>
-  <li><a href='kanji_de_go_list_Lv03.html'>Lv03 -- 漢検4〜準1級</a></li>
-  <li><a href='kanji_de_go_list_Lv04.html'>Lv04 -- 漢検2〜1級</a></li>
-  <li><a href='kanji_de_go_list_Lv05.html'>Lv05 -- 漢検準1級〜対象外</a></li>
-  <li><a href='kanji_de_go_list_Lv06.html'>Lv06 -- 対象外</a></li>
-  <li><a href='kanji_de_go_list_Lv07.html'>Lv07 -- 対象外</a></li>
-  <li><a href='kanji_de_go_list_LvCa004.html'>LvCa004 -- JLPT N5</a></li>
+  <li><a href='kdg_list_Lv00.html'>Lv00 -- サンプル</a></li>
+  <li><a href='kdg_list_Lv01.html'>Lv01 -- 漢検10〜5級</a></li>
+  <li><a href='kdg_list_Lv02.html'>Lv02 -- 漢検6〜準2級</a></li>
+  <li><a href='kdg_list_Lv03.html'>Lv03 -- 漢検4〜準1級</a></li>
+  <li><a href='kdg_list_Lv04.html'>Lv04 -- 漢検2〜1級</a></li>
+  <li><a href='kdg_list_Lv05.html'>Lv05 -- 漢検準1級〜対象外</a></li>
+  <li><a href='kdg_list_Lv06.html'>Lv06 -- 対象外</a></li>
+  <li><a href='kdg_list_Lv07.html'>Lv07 -- 対象外</a></li>
+  <li><a href='kdg_list_LvCa004.html'>LvCa004 -- JLPT N5</a></li>
 </ol>
 
 <h2>レベルと漢検の対応</h2>
@@ -221,6 +221,6 @@ if [[ -d  docs/kanji_problems ]]
 then
   rm -rf docs/kanji_problems
 fi
-mv kanji_problems index.html kanji_de_go_list_Lv*.html docs
+mv kanji_problems index.html kdg_list_Lv*.html docs
 
 echo "[DONE!]"
