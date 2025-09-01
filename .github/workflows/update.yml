@@ -27,7 +27,7 @@ jobs:
     - run: resizer --version
     - run: pipx install gdown
     - run: gdown --version
-    - uses: mfinelli/setup-imagemagick@v6
+    - uses: mfinelli/setup-imagemagick@v7
     - run: magick --version | sed -n 1p
 
     - run: ./ci.sh
