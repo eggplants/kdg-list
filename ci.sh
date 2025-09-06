@@ -7,6 +7,8 @@ if ! command -v gdown git &>/dev/null; then
   exit 1
 fi
 
+NAME="$(base64 -d <<<'5ryi5a2X44GnR08hCg==')"
+
 curl -s "$(
   curl -s 'https://raw.githubusercontent.com/Formidi/KanzideGoFAQ/gh-pages/md/faq.md' |
   grep -oEm1 'https://drive.google.com/drive/folders/[^<"]+'
@@ -16,7 +18,7 @@ game_file_id="$(
   grep -oP '(?<=<div data-id=")[^"]+(?=")' drive_page |
   tail -1
 )"
-game_version="$(grep -oP '(?<=>漢字でGO!)[^<]+(?=.zip<)' drive_page | tail -1 | tr -d ' ')"
+game_version="$(grep -oP "(?<=>${NAME})[^<]+(?=.zip<)" drive_page | tail -1 | tr -d ' ')"
 if [[ -z "$game_file_id" || -z "$game_version" ]]; then
   exit 1
 fi
@@ -27,10 +29,10 @@ if git tag -l | grep -q '^'"${game_version}"'$'; then
   exit 0
 fi
 
-if ! [[ -d '漢字でGO!' ]]; then
+if ! [[ -d "$NAME" ]]; then
   gdown "$game_file_id" -O game.zip
   unzip -q -Ocp932 game.zip
-  if ! grep -q '"'"${game_version}"'\\"' '漢字でGO!/www/data/Map003.json'; then
+  if ! grep -q '"'"${game_version}"'\\"' "${NAME}/www/data/Map003.json"; then
     exit 1
   fi
   rm game.zip
