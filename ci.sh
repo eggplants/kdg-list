@@ -66,4 +66,5 @@ git add docs/
 git commit -m "update ${game_version} / $(date +%Y-%m-%d)" --quiet || :
 git push origin gh-pages -f
 
+git clean -fd
 git checkout master
