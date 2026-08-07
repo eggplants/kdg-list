@@ -2,46 +2,51 @@
 
 set -euxo pipefail
 
-if ! command -v gdown git &>/dev/null; then
-  echo 'Install: gdown, git' >&2
-  exit 1
-fi
+for _cmd in gdown git; do
+  if ! command -v "$_cmd" &>/dev/null; then
+    echo "Install: $_cmd" >&2
+    exit 1
+  fi
+done
 
 NAME="$(base64 -d <<<'5ryi5a2X44GnR08hCg==')"
 
-curl -s "$(
+curl -sL "$(
   curl -s 'https://raw.githubusercontent.com/Formidi/KanzideGoFAQ/gh-pages/md/faq.md' |
   grep -oEm1 'https://drive.google.com/drive/folders/[^<"]+'
 )" > drive_page
 
+# data-id is on <tr> elements, not <div>; exclude the "_gd" sentinel value
 game_file_id="$(
-  grep -oP '(?<=<div data-id=")[^"]+(?=")' drive_page |
+  grep -oP '(?<=data-id=")[^"]+' drive_page |
+  grep -v '^_' |
   tail -1
 )"
-game_version="$(grep -oP "(?<=>${NAME})[^<]+(?=.zip<)" drive_page | tail -1 | tr -d ' ')"
-if [[ -z "$game_file_id" || -z "$game_version" ]]; then
+rm drive_page
+if [[ -z "$game_file_id" ]]; then
   exit 1
 fi
-rm drive_page
+
+if ! [[ -d "$NAME" ]]; then
+  gdown "$game_file_id" -O game.zip
+  unzip -q -Ocp932 game.zip
+  rm game.zip
+fi
+
+# Version no longer embedded in the Drive filename; read it from the game data instead
+game_version="$(grep -oP '(?<=")\d+\.\d+\.\d+\.[0-9a-zA-Z]+(?=\\")' "${NAME}/www/data/Map003.json" | head -1)"
+if [[ -z "$game_version" ]]; then
+  exit 1
+fi
 
 git pull --tags
 if git tag -l | grep -q '^'"${game_version}"'$'; then
   exit 0
 fi
 
-if ! [[ -d "$NAME" ]]; then
-  gdown "$game_file_id" -O game.zip
-  unzip -q -Ocp932 game.zip
-  if ! grep -q '"'"${game_version}"'\\"' "${NAME}/www/data/Map003.json"; then
-    exit 1
-  fi
-  rm game.zip
-fi
-
 ./gen.sh "${game_version}"
 
-if [[ -z "$(git status -s)" ]]
-then
+if [[ -z "$(git status -s)" ]]; then
   exit 0
 fi
 
@@ -56,11 +61,9 @@ git push --tags
 
 git branch -D gh-pages || :
 git checkout --orphan gh-pages
-git rm --cached -r .github .gitignore README.md ci.sh gen.sh
+git rm --cached -r .
 git add docs/
 git commit -m "update ${game_version} / $(date +%Y-%m-%d)" --quiet || :
 git push origin gh-pages -f
 
-# return to master:
-# git add .
-# git checkout master
+git checkout master

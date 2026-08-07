@@ -10,7 +10,7 @@ LOG="${LOG:-}"
 SKIP="${SKIP:-}"
 [[ -n "$SKIP" ]] && echo Processes of image conversion will be skipped.
 
-if ! command -v awk magick resizer
+if ! command -v awk magick resizer &>/dev/null
 then
   echo "install: awk magick resizer" >&2
   exit 1

@@ -9,25 +9,27 @@ jobs:
   update:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v6
-    - uses: actions/cache@v5
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+    - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
       with:
         path: |
           ~/.cargo/bin/
           ~/.cargo/registry/index/
           ~/.cargo/registry/cache/
           ~/.cargo/git/db/
-        key: ${{ runner.os }}-cargo-resizer-5_1_1
+        key: ${{ runner.os }}-cargo-resizer-6_1_0
     - run: |
         if ! command -v resizer; then
-          git clone https://github.com/Cykooz/fast_image_resize --depth 1 --single-branch -b v5.1.1
-          cargo install --path ./fast_image_resize/resizer
+          git clone https://github.com/Cykooz/fast_image_resize --depth 1 --single-branch -b v6.1.0
+          cargo fetch --manifest-path ./fast_image_resize/Cargo.toml
+          cargo update --manifest-path ./fast_image_resize/Cargo.toml -p zune-core --precise 0.4.12
+          cargo install --path ./fast_image_resize/resizer --locked
           rm -rf ./fast_image_resize
         fi
     - run: resizer --version
     - run: pipx install gdown
     - run: gdown --version
-    - uses: mfinelli/setup-imagemagick@v7
+    - uses: mfinelli/setup-imagemagick@7bcb45380be40873a59cc0d4a457ec9228b6c84c # v8.0.0
     - run: magick --version | sed -n 1p
 
     - run: ./ci.sh
