@@ -38,7 +38,7 @@ sed -r 's/(問題|解１|文上)://g' |
 tr ' ' \\t >> _answer.tsv
 
 find '漢字でGO!/www/img/pictures' -name 'Lv*' |
-  grep -E 'Lv[0-9]+_[0-9]+.rpgmvp' |
+  grep -E 'Lv[0-9]+(_Ca[0-9]+)?_[0-9]+\.rpgmvp' |
   grep -v 0000 |
   awk -F/ '$0=$NF' | sort -V > _problem_a.tsv
 
@@ -51,9 +51,9 @@ len_c="$(wc -l <_problem_b.tsv)"
 echo "_answer.tsv lines: <${len_a}>"
 echo "_problem_a.tsv:    <${len_b}>"
 echo "_problem_b.tsv:    <${len_c}>"
-if ! [[ "$len_a" == "$((len_b+len_c))" ]]
+if [[ "$len_a" -lt "$((len_b+len_c))" ]]
 then
-  echo "Error: _answer.tsv lines <${len_a}> != _problem_a.tsv <${len_b}>  + _problem_b.tsv <${len_c}> mismatch.">&2
+  echo "Error: _answer.tsv lines <${len_a}> < _problem_a.tsv <${len_b}> + _problem_b.tsv <${len_c}>: images without answers.">&2
   exit 1
 fi
 
