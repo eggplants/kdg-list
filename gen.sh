@@ -65,9 +65,9 @@ mkdir -p ./kanji_problems/webp
 if [[ -z "$SKIP" ]]; then
   echo "[Convert RPGMVP images of problems into PNG]"
 
-  find '漢字でGO!/www/img/pictures' |
-  grep -E "Lv(Ca)?[0-9]+_[0-9]+.rpgmvp" |
-  grep -v '_0000.png' |
+  find '漢字でGO!/www/img/pictures' -type f |
+  grep -E '/Lv([0-9]+(_Ca[0-9]+)?|Ca[0-9]+)_[0-9]+\.rpgmvp$' |
+  grep -v '_0000\.rpgmvp$' |
   while read -r i
   do
     [[ -n "$LOG" ]] && printf '\e[K\r%s' "$i"
@@ -96,8 +96,8 @@ while read -r i
 do
   levels+=("$i")
 done < <(
-  find kanji_problems/png -type f -name '*' |
-  awk -F'[_/]' '$0=$(NF-1)' |
+  find kanji_problems/png -type f -name '*.png' -printf '%f\n' |
+  sed -r 's/_[0-9]+\.png$//' |
   sort -V | uniq
 )
 
@@ -106,7 +106,7 @@ for (( idx=0; idx<levels_len; idx++ ))
 do
   level="${levels[idx]}"
   f="kdg_list_${level}.html"
-  count="$(find kanji_problems/png -name "$level"'_*.png' | wc -l)"
+  count="$(find kanji_problems/png -type f -printf '%f\n' | grep -cE "^${level}_[0-9]+\.png$" || true)"
 
   if [[ "$idx" != 0 ]]
   then
@@ -145,7 +145,8 @@ do
   <tbody>
 EOS
 
-  grep "$level" kdg.tsv | while IFS=$'\t' read -r a b c
+  awk -F'\t' -v lv="$level" '$1 ~ "^" lv "_[0-9]+$"' kdg.tsv |
+  while IFS=$'\t' read -r a b c
   do
     cat<<EOS
     <tr>
@@ -178,6 +179,8 @@ level_desc() {
     Lv05) echo '漢検準1級〜対象外' ;;
     Lv06|Lv07|Lv08) echo '対象外' ;;
     LvCa004) echo 'JLPT N5' ;;
+    Lv*_Ca013) echo '悪口・ののしり言葉' ;;
+    Lv*_Ca014) echo 'カタカナ語・俗語' ;;
     *) echo '' ;;
   esac
 }
