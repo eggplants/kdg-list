@@ -46,17 +46,18 @@ fi
 
 ./gen.sh "${game_version}"
 
-if [[ -z "$(git status -s)" ]]; then
-  exit 0
-fi
-
 git config user.name  "github-actions[bot]"
 git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
+# docs/ is regenerated on every run, so only kdg.tsv decides whether master moves
 git add kdg.tsv
-git commit -m "update ${game_version} / $(date +%Y-%m-%d)"
+if ! git diff --cached --quiet; then
+  git commit -m "update ${game_version} / $(date +%Y-%m-%d)"
+  git push
+fi
+
+# tag regardless, so the next run can early-exit on this version
 git tag "$game_version"
-git push
 git push --tags
 
 git branch -D gh-pages || :
