@@ -167,6 +167,28 @@ EOS
 done
 
 echo "[HTML:index]"
+
+level_desc() {
+  case "$1" in
+    Lv00) echo 'サンプル' ;;
+    Lv01) echo '漢検10〜5級' ;;
+    Lv02) echo '漢検6〜準2級' ;;
+    Lv03) echo '漢検4〜準1級' ;;
+    Lv04) echo '漢検2〜1級' ;;
+    Lv05) echo '漢検準1級〜対象外' ;;
+    Lv06|Lv07|Lv08) echo '対象外' ;;
+    LvCa004) echo 'JLPT N5' ;;
+    *) echo '' ;;
+  esac
+}
+
+level_items=""
+for level in "${levels[@]}"
+do
+  desc="$(level_desc "$level")"
+  level_items+="  <li><a href='kdg_list_${level}.html'>${level}${desc:+ -- $desc}</a></li>"$'\n'
+done
+
 cat << EOS > index.html
 <!DOCTYPE html>
 <html lang="ja" dir="ltr">
@@ -188,16 +210,7 @@ cat << EOS > index.html
 <h2>リスト一覧</h2>
 
 <ol>
-  <li><a href='kdg_list_Lv00.html'>Lv00 -- サンプル</a></li>
-  <li><a href='kdg_list_Lv01.html'>Lv01 -- 漢検10〜5級</a></li>
-  <li><a href='kdg_list_Lv02.html'>Lv02 -- 漢検6〜準2級</a></li>
-  <li><a href='kdg_list_Lv03.html'>Lv03 -- 漢検4〜準1級</a></li>
-  <li><a href='kdg_list_Lv04.html'>Lv04 -- 漢検2〜1級</a></li>
-  <li><a href='kdg_list_Lv05.html'>Lv05 -- 漢検準1級〜対象外</a></li>
-  <li><a href='kdg_list_Lv06.html'>Lv06 -- 対象外</a></li>
-  <li><a href='kdg_list_Lv07.html'>Lv07 -- 対象外</a></li>
-  <li><a href='kdg_list_LvCa004.html'>LvCa004 -- JLPT N5</a></li>
-</ol>
+${level_items}</ol>
 
 <h2>レベルと漢検の対応</h2>
 
